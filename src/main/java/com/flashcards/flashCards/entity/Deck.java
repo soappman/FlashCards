@@ -1,25 +1,52 @@
 package com.flashcards.flashCards.entity;
 
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
+
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.nio.ByteBuffer;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+@Entity
+@Getter
+@Setter
 @Table
 public class Deck {
 
-    @PrimaryKey
+
+    @Id
+    @GeneratedValue
+    @UuidGenerator
     private UUID id;
 
+    @Column
     private String deckName;
 
+    @Column
     private String deckDescription;
 
-    private ByteBuffer image;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    private Set<String> cards;
+    @Lob
+    private Byte[] image;
 
+    @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FlashCard> cards = new HashSet<>();
+
+    protected Deck () {
+    }
+
+    public Deck(String deckName, String deckDescription) {
+        this.deckName = deckName;
+        this.deckDescription = deckDescription;
+    }
 
 }

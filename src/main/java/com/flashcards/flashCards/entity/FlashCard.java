@@ -1,28 +1,54 @@
 package com.flashcards.flashCards.entity;
 
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
+
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
-@Table
+@Entity
+@Getter
+@Setter
+@Table(name="flash_card")
 public class FlashCard {
 
-    @PrimaryKey
+    @Id
+    @GeneratedValue
+    @UuidGenerator
     private UUID id;
 
+    @Column(nullable = false)
     private String cardName;
 
+    @Column(nullable = false)
     private String question;
 
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deck_id", nullable = false)
+    private Deck deck;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false)
     private String description;
 
-    private ByteBuffer image;
+    @Column
+    private Byte[] image;
 
+    @Column
     private String URL;
 
-    public FlashCard(UUID id, String cardName, String question, String description, ByteBuffer image, String URL) {
+    protected FlashCard () {
+    }
+
+    public FlashCard(UUID id, String cardName, String question, String description, Byte[] image, String URL) {
         this.id = id;
         this.cardName = cardName;
         this.question = question;
@@ -31,51 +57,4 @@ public class FlashCard {
         this.URL = URL;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getCardName() {
-        return cardName;
-    }
-
-    public void setCardName(String cardName) {
-        this.cardName = cardName;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public ByteBuffer getImage() {
-        return image;
-    }
-
-    public void setImage(ByteBuffer image) {
-        this.image = image;
-    }
-
-    public String getURL() {
-        return URL;
-    }
-
-    public void setURL(String URL) {
-        this.URL = URL;
-    }
 }

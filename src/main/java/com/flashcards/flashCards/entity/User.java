@@ -1,59 +1,39 @@
 package com.flashcards.flashCards.entity;
 
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-@Table
+@Entity
+@Getter
+@Setter
+@Table(name="users")
 public class User {
 
-    @PrimaryKey
+    @Id
+    @GeneratedValue
+    @UuidGenerator
     private UUID id;
 
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
-    private Set<String> decks;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Deck> decks = new HashSet<>();
 
-    public User(UUID id, String name, String email, Set<String> decks) {
-        this.id = id;
-        this.userName = name;
-        this.email = email;
-        this.decks = decks;
+    protected User() {
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId() {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
+    public User(String userName, String email) {
         this.userName = userName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
         this.email = email;
+
     }
 
-    public Set<String> getDecks() {
-        return decks;
-    }
-
-    public void setDecks(Set<String> decks) {
-        this.decks = decks;
-    }
 }
