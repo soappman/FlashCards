@@ -15,7 +15,6 @@ public class User {
 
     @Id
     @GeneratedValue
-    @UuidGenerator
     private UUID id;
 
     @Column(name = "user_name", nullable = false)

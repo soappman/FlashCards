@@ -22,7 +22,6 @@ public class Deck {
 
     @Id
     @GeneratedValue
-    @UuidGenerator
     private UUID id;
 
     @Column
