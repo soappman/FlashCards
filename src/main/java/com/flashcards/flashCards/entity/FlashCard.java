@@ -17,7 +17,7 @@ import java.util.UUID;
 public class FlashCard {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     @Column(nullable = false)
@@ -39,7 +39,7 @@ public class FlashCard {
     private String description;
 
     @Column
-    private Byte[] image;
+    private String imageURL;
 
     @Column
     private String URL;
@@ -47,12 +47,12 @@ public class FlashCard {
     protected FlashCard () {
     }
 
-    public FlashCard(UUID id, String cardName, String question, String description, Byte[] image, String URL) {
+    public FlashCard(UUID id, String cardName, String question, String description, String imageURL, String URL) {
         this.id = id;
         this.cardName = cardName;
         this.question = question;
         this.description = description;
-        this.image = image;
+        this.imageURL = imageURL;
         this.URL = URL;
     }
 

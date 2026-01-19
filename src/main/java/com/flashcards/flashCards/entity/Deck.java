@@ -34,8 +34,8 @@ public class Deck {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Lob
-    private Byte[] image;
+    @Column
+    private String imageURL;
 
     @OneToMany(mappedBy = "deck", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FlashCard> cards = new HashSet<>();
