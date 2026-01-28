@@ -7,6 +7,7 @@ import com.flashcards.flashCards.dto.GetUserResponse;
 import com.flashcards.flashCards.entity.User;
 import com.flashcards.flashCards.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -14,21 +15,25 @@ import java.util.UUID;
 @Component
 public class UserService {
 
-private final UserRepository userRepository;
+    private final UserRepository userRepository;
+
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public AddUserResponse addUser(AddUserRequest request){
-        User user = new User(request.getUserName(), request.getEmail());
+    public AddUserResponse addUser(AddUserRequest request) {
+        String encodedPassword = PasswordEncoder.(request.getPassword());
+        User user = new User(request.getUserName(), request.getEmail(),encodedPassword);
         User saved = userRepository.save(user);
         AddUserResponse response = new AddUserResponse();
         response.setId(saved.getId());
         response.setEmail(saved.getEmail());
         return response;
-    };
+    }
 
-    public GetUserResponse getUser(GetUserRequest request){
+    ;
+
+    public GetUserResponse getUser(GetUserRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
         GetUserResponse response = new GetUserResponse();
