@@ -1,59 +1,76 @@
 package com.flashcards.flashCards.entity;
 
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-@Table
-public class User {
+@Entity
+@Getter
+@Setter
+@Table(name="users")
+public class User implements UserDetails {
 
-    @PrimaryKey
+    @Id
+    @GeneratedValue
     private UUID id;
 
+    @Column(name = "user_name", nullable = false)
     private String userName;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
-    private Set<String> decks;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Deck> decks = new HashSet<>();
 
-    public User(UUID id, String name, String email, Set<String> decks) {
-        this.id = id;
-        this.userName = name;
-        this.email = email;
-        this.decks = decks;
+    @Column(nullable = false)
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    protected User() {
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId() {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
+    public User(String userName, String email, String password) {
         this.userName = userName;
+        this.email = email;
+        this.password = password;
     }
 
-    public String getEmail() {
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public String getUsername() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
     }
 
-    public Set<String> getDecks() {
-        return decks;
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
     }
 
-    public void setDecks(Set<String> decks) {
-        this.decks = decks;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 }
